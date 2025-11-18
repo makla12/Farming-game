@@ -5,7 +5,7 @@ public class EconomyManager : MonoBehaviour
 {
     public static EconomyManager Instance;
 
-    public int money = 100;
+    public int money = 5;
     public TMP_Text moneyText;
 
     private void Awake()
