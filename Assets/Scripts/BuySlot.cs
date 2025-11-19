@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class BuySlot : MonoBehaviour
 {
-    [SerializeField] private GameObject slotPrefab;
+    public SlotGrid slotGrid;
 
     public void BuyNewSlot()
     {
         if (EconomyManager.Instance.SpendMoney(50))
         {
-            Instantiate(slotPrefab, transform.position, Quaternion.identity);
+            Vector2Int slotPosition = new((int)transform.position.x / 5, (int)transform.position.z / 5);
+            slotGrid.BuySlotAt(slotPosition);
             Destroy(gameObject);
         }
     }
