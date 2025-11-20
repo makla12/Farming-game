@@ -8,7 +8,7 @@ public class SaveManager : MonoBehaviour
     public PlayerSaveData loadedData = new();
 
     private float timeSinceLastSave = 0f;
-    private const float saveInterval = 60f; // Save every 10 seconds
+    private const float saveInterval = 30f;
 
     public void SaveGame()
     {
@@ -31,6 +31,7 @@ public class SaveManager : MonoBehaviour
             PlayerSaveData playerSaveData = JsonUtility.FromJson<PlayerSaveData>(json);
             economyManager.money = playerSaveData.money;
             gridManager.LoadSlots(playerSaveData.slotsData);
+            PlantManager.PassTime(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - playerSaveData.lastExitTime);
         }
     }
 
@@ -47,5 +48,10 @@ public class SaveManager : MonoBehaviour
             SaveGame();
             timeSinceLastSave = 0f;
         }
+    }
+
+    void OnApplicationQuit()
+    {
+        SaveGame();
     }
 }

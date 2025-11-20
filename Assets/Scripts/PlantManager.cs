@@ -51,7 +51,7 @@ public class PlantManager : MonoBehaviour
         } 
     }
 
-    public void PassTime(long seconds)
+    public static void PassTime(long seconds)
     {
         Slot[] slots = FindObjectsByType<Slot>(FindObjectsSortMode.InstanceID);
         foreach (Slot slot in slots)
