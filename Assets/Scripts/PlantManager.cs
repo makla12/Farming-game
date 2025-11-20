@@ -17,9 +17,9 @@ public class PlantManager : MonoBehaviour
     }
 
     [SerializeField] GameObject plantUi;
-    [NonSerialized] public SlotManager selectedSlot = null;
+    [NonSerialized] public Slot selectedSlot = null;
 
-    public void OpenMenu(SlotManager slot)
+    public void OpenMenu(Slot slot)
     {
         selectedSlot = slot;
         plantUi.SetActive(true);
@@ -51,12 +51,12 @@ public class PlantManager : MonoBehaviour
         } 
     }
 
-    public void PassTime()
+    public static void PassTime(long seconds)
     {
-        SlotManager[] slots = FindObjectsByType<SlotManager>(FindObjectsSortMode.InstanceID);
-        foreach (SlotManager slot in slots)
+        Slot[] slots = FindObjectsByType<Slot>(FindObjectsSortMode.InstanceID);
+        foreach (Slot slot in slots)
         {
-            slot.PassTime(1f);
+            slot.PassTime(seconds);
         }
     }
 
