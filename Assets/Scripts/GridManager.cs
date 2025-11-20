@@ -1,14 +1,55 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-public class SlotGrid : MonoBehaviour
+public class GridManager : MonoBehaviour
 {
+    public static GridManager Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else 
+        {
+            Destroy(gameObject);
+        }
+    }
+
     [SerializeField] private ConfirmBuyUi confirmBuyUi;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject buySlotPrefab;
     private HashSet<Vector2Int> occupiedSlots = new();
     private HashSet<Vector2Int> slotsToBuy = new();
+
+    public void LoadSlots(List<SlotSaveData> slotsSaveData)
+    {
+        foreach(var slotData in slotsSaveData)
+        {
+            occupiedSlots.Add(slotData.position);
+            Slot slot = Instantiate(slotPrefab, new Vector3(slotData.position.x * 5, 0, slotData.position.y * 5), Quaternion.identity, transform).GetComponent<Slot>();
+            slot.LoadData(slotData.plantedType, slotData.secondsLeft);
+        }
+
+        foreach (var pos in occupiedSlots)
+        {
+            CreateBuySlotsArround(pos);
+        }
+    }
+
+    public List<SlotSaveData> GetSlotsData()
+    {
+        List<SlotSaveData> slotsData = new();
+        Slot[] slots = FindObjectsByType<Slot>(FindObjectsSortMode.InstanceID);
+        foreach (var slot in slots)
+        {
+            slotsData.Add(slot.GetSlotSaveData());
+        }
+
+        return slotsData;
+    }
 
     private void CreateBuySlotsArround(Vector2Int position)
     {
@@ -49,13 +90,5 @@ public class SlotGrid : MonoBehaviour
             Instantiate(slotPrefab, new Vector3(position.x * 5, 0, position.y * 5), Quaternion.identity, transform);
             CreateBuySlotsArround(position);
         }
-    }
-
-    void Awake()
-    {
-        Vector2Int initialPosition = new(0, 0);
-        // Instantiate(slotPrefab, new Vector3(initialPosition.x * 5, 0, initialPosition.y * 5), Quaternion.identity, transform);
-        occupiedSlots.Add(initialPosition);
-        CreateBuySlotsArround(initialPosition);
     }
 }

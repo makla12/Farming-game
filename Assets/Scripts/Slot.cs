@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class SlotManager : MonoBehaviour
+public class Slot : MonoBehaviour
 {
     [SerializeField] private TMP_Text textUi;
     [SerializeField] private GameObject EmptySoil;
@@ -13,12 +13,45 @@ public class SlotManager : MonoBehaviour
     [SerializeField] private GameObject GrowingBeetroot;
     [SerializeField] private GameObject MatureBeetroot;
 
-    private string plantedType = null;
+    private string plantedType = "";
     private double secondsLeft = 0;
+
+    public void LoadData(string plantedType, double secondsLeft)
+    {
+        this.plantedType = plantedType;
+        this.secondsLeft = secondsLeft;
+
+        if(plantedType == "Wheat")
+        {
+            EmptySoil.SetActive(false);
+            if (secondsLeft > 0)
+            {
+                GrowingWheat.SetActive(true);
+            }
+            else
+            {
+                MatureWheat.SetActive(true);
+            }
+        }
+        else if(plantedType == "Beetroot")
+        {
+            EmptySoil.SetActive(false);
+            if (secondsLeft > 0)
+            {
+                GrowingBeetroot.SetActive(true);
+            }
+            else
+            {
+                MatureBeetroot.SetActive(true);
+            }
+        }
+
+        UpdateTextUi();
+    }
 
     private void UpdateTextUi()
     {
-        if (plantedType == null)
+        if (plantedType == "")
         {
             textUi.text = "Plant";
         }
@@ -52,7 +85,7 @@ public class SlotManager : MonoBehaviour
 
     public void PassTime(float seconds)
     {
-        if (plantedType == null) return;
+        if (plantedType == "") return;
         if (secondsLeft <= 0) return;
 
         secondsLeft -= seconds;
@@ -76,7 +109,7 @@ public class SlotManager : MonoBehaviour
     {
         if(plantedType == "Wheat" && secondsLeft <= 0)
         {
-            plantedType = null;
+            plantedType = "";
             MatureWheat.SetActive(false);
             EmptySoil.SetActive(true);
             EconomyManager.Instance.AddMoney(2);
@@ -86,7 +119,7 @@ public class SlotManager : MonoBehaviour
 
         if(plantedType == "Beetroot" && secondsLeft <= 0)
         {
-            plantedType = null;
+            plantedType = "";
             EconomyManager.Instance.AddMoney(20);
             MatureBeetroot.SetActive(false);
             EmptySoil.SetActive(true);
@@ -94,8 +127,19 @@ public class SlotManager : MonoBehaviour
             return;
         }
 
-        if(plantedType != null) return;
+        if(plantedType != "") return;
         PlantManager.Instance.OpenMenu(this);
+    }
+
+    public SlotSaveData GetSlotSaveData()
+    {
+        SlotSaveData data = new()
+        {
+            position = new Vector2Int((int)(transform.position.x / 5), (int)(transform.position.z / 5)),
+            plantedType = plantedType,
+            secondsLeft = secondsLeft
+        };
+        return data;
     }
 
     void Update()

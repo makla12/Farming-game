@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BuySlot : MonoBehaviour
 {
-    public SlotGrid slotGrid;
+    public GridManager slotGrid;
 
     public void BuyNewSlot()
     {

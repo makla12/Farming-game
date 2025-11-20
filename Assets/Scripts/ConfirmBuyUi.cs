@@ -3,12 +3,12 @@ using UnityEngine;
 public class ConfirmBuyUi : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
-    private SlotGrid slotGrid;
+    private GridManager slotGrid;
     private Vector2Int slotPosition;
     private GameObject toDestroy;
     private int slotCost = 0;
 
-    public void Setup(SlotGrid slotGrid, Vector2Int slotPosition, int slotCost, GameObject toDestroy)
+    public void Setup(GridManager slotGrid, Vector2Int slotPosition, int slotCost, GameObject toDestroy)
     {
         this.slotGrid = slotGrid;
         this.slotPosition = slotPosition;
