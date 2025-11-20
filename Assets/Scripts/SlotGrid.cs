@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SlotGrid : MonoBehaviour
 {
+    [SerializeField] private ConfirmBuyUi confirmBuyUi;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject buySlotPrefab;
     private HashSet<Vector2Int> occupiedSlots = new();
@@ -32,6 +33,11 @@ public class SlotGrid : MonoBehaviour
                 slotsToBuy.Add(adjacentPos);
             }
         }
+    }
+
+    public void TryToBuySlotAt(Vector2Int position, GameObject toDestroy)
+    {
+        confirmBuyUi.Setup(this, position, slotCost: 50, toDestroy);
     }
 
     public void BuySlotAt(Vector2Int position)
