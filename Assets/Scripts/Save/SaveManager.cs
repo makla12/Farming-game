@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SaveManager : MonoBehaviour
 {
@@ -25,14 +26,22 @@ public class SaveManager : MonoBehaviour
 
     public void LoadGame()
     {
+        PlayerSaveData playerSaveData = new();
         if (PlayerPrefs.HasKey("PlayerSaveData"))
         {
             string json = PlayerPrefs.GetString("PlayerSaveData");
-            PlayerSaveData playerSaveData = JsonUtility.FromJson<PlayerSaveData>(json);
-            economyManager.money = playerSaveData.money;
-            gridManager.LoadSlots(playerSaveData.slotsData);
-            PlantManager.PassTime(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - playerSaveData.lastExitTime);
+            playerSaveData = JsonUtility.FromJson<PlayerSaveData>(json);
         }
+
+        economyManager.money = playerSaveData.money;
+        gridManager.LoadSlots(playerSaveData.slotsData);
+        PlantManager.PassTime(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - playerSaveData.lastExitTime);
+    }
+
+    public void ResetProgress()
+    {
+        PlayerPrefs.DeleteKey("PlayerSaveData");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void Awake()
