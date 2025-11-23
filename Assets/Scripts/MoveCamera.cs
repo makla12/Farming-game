@@ -3,9 +3,9 @@ using UnityEngine;
 public class MousePanCamera : MonoBehaviour
 {
     private PlayerControls controls;
-    // The main camera component
     [SerializeField] private Camera cam;
     private Vector3 dragOrigin;
+    private bool isPanning = false;
 
     [Header("Boundary Limits (Set to 0 to disable)")]
     [SerializeField] private float minX = 0f;
@@ -13,20 +13,32 @@ public class MousePanCamera : MonoBehaviour
     [SerializeField] private float minY = 0f;
     [SerializeField] private float maxY = 0f;
 
+    void OnEnable()
+    {
+        controls.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        controls.Player.Disable();
+    }
+
+    void Awake()
+    {
+        controls = new PlayerControls();
+        controls.Player.Click.started += ctx => 
+        {
+            isPanning = true;
+            dragOrigin = cam.ScreenToWorldPoint(controls.Player.Point.ReadValue<Vector2>());
+        };
+        controls.Player.Click.canceled += ctx => isPanning = false;
+
+        controls.Player.Enable();
+    }
+
     private void HandlePan()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            dragOrigin = cam.ScreenToWorldPoint(Input.mousePosition);
-            return;
-        }
-
-        if (!Input.GetKey(KeyCode.Mouse0)) 
-        {
-            return;
-        }
-
-        Vector3 currentMouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 currentMouseWorldPos = cam.ScreenToWorldPoint(controls.Player.Point.ReadValue<Vector2>());
         Vector3 difference = dragOrigin - currentMouseWorldPos;
         Vector3 newPosition = transform.position + difference;
 
@@ -42,18 +54,8 @@ public class MousePanCamera : MonoBehaviour
         transform.position = newPosition;
     }
 
-    private void HandleScroll()
-    {
-        float scrollInput = Input.mouseScrollDelta.y;
-        if (scrollInput != 0f)
-        {
-            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollInput * 5f, 2f, 20f);
-        }
-    }
-
     void Update()
     {
-        HandlePan();
-        HandleScroll();
+        if(isPanning) HandlePan();
     }
 }
