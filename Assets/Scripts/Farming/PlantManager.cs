@@ -16,8 +16,9 @@ public class PlantManager : MonoBehaviour
         }
     }
 
+    private Slot selectedSlot = null;
     [SerializeField] GameObject plantUi;
-    [NonSerialized] public Slot selectedSlot = null;
+    public PlantData[] plantsData;
 
     public void OpenMenu(Slot slot)
     {
@@ -36,7 +37,7 @@ public class PlantManager : MonoBehaviour
         if (selectedSlot == null) return;
         if (EconomyManager.Instance.SpendMoney(1))
         {
-            selectedSlot.PlantWheat();
+            selectedSlot.Plant(0);
             CloseMenu();
         } 
     }
@@ -46,7 +47,7 @@ public class PlantManager : MonoBehaviour
         if(selectedSlot == null) return;
         if (EconomyManager.Instance.SpendMoney(15))
         {
-            selectedSlot.PlantBeetroot();
+            selectedSlot.Plant(1);
             CloseMenu();
         } 
     }

@@ -63,4 +63,12 @@ public class SaveManager : MonoBehaviour
     {
         SaveGame();
     }
+
+    [ContextMenu("Reset Progress")]
+    void ResetProgressInEditor()
+    {
+        #if UNITY_EDITOR
+        PlayerPrefs.DeleteKey("PlayerSaveData");
+        #endif
+    }
 }

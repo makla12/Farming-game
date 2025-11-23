@@ -399,7 +399,8 @@ MonoBehaviour:
     money: 500
     slotsData:
     - position: {x: 0, y: 0}
-      plantedType: 
+      slotState: 0
+      plantedId: -1
       secondsLeft: 0
     lastExitTime: 1763908482
 --- !u!114 &487132563
@@ -442,6 +443,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlantManager
   plantUi: {fileID: 1286963511}
+  plantsData:
+  - plantType: Wheet
+    growthTime: 10
+    sellPrice: 5
+    growingSprite: {fileID: -7377819553374844296, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
+    matureSprite: {fileID: 7411919347176863388, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
+  - plantType: Beetroot
+    growthTime: 20
+    sellPrice: 30
+    growingSprite: {fileID: -7377819553374844296, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
+    matureSprite: {fileID: 7411919347176863388, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
 --- !u!4 &487132566
 Transform:
   m_ObjectHideFlags: 0
@@ -2268,6 +2280,7 @@ MonoBehaviour:
   confirmBuyUi: {fileID: 487132564}
   slotPrefab: {fileID: 1403139140613041265, guid: 66422186c3ec0a9448c1f6c243de30d1, type: 3}
   buySlotPrefab: {fileID: 1403139140613041265, guid: f45cb9057f019224bb1c7e5c3e50e974, type: 3}
+  plantManager: {fileID: 487132565}
 --- !u!4 &1353385980
 Transform:
   m_ObjectHideFlags: 0
@@ -2972,7 +2985,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveCamera
   cam: {fileID: 1678224601}
-  panSpeed: 1
   minX: 0
   maxX: 0
   minY: 0

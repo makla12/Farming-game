@@ -2,48 +2,45 @@ using System;
 using TMPro;
 using UnityEngine;
 
+public enum SlotState
+{
+    Empty,
+    Growing,
+    Mature,
+}
+
 public class Slot : MonoBehaviour
 {
     [SerializeField] private TMP_Text textUi;
-    [SerializeField] private GameObject EmptySoil;
+    [SerializeField] private SpriteRenderer icon;
+    [SerializeField] private Sprite EmptySoil;
+    [NonSerialized] public PlantManager plantManager;
 
-    [SerializeField] private GameObject GrowingWheat;
-    [SerializeField] private GameObject MatureWheat;
-
-    [SerializeField] private GameObject GrowingBeetroot;
-    [SerializeField] private GameObject MatureBeetroot;
-
-    private string plantedType = "";
+    private SlotState slotState = SlotState.Empty;
+    private int plantedId = -1;
     private double secondsLeft = 0;
 
-    public void LoadData(string plantedType, double secondsLeft)
+    public void LoadData(int plantedId, double secondsLeft, SlotState slotState)
     {
-        this.plantedType = plantedType;
+        this.slotState = slotState;
+        this.plantedId = plantedId;
         this.secondsLeft = secondsLeft;
 
-        if(plantedType == "Wheat")
+        if(slotState == SlotState.Empty)
         {
-            EmptySoil.SetActive(false);
-            if (secondsLeft > 0)
-            {
-                GrowingWheat.SetActive(true);
-            }
-            else
-            {
-                MatureWheat.SetActive(true);
-            }
+            icon.sprite = EmptySoil;
+            UpdateTextUi();
+            return;
         }
-        else if(plantedType == "Beetroot")
+
+        PlantData plantData = plantManager.plantsData[plantedId];
+        if (slotState == SlotState.Growing)
         {
-            EmptySoil.SetActive(false);
-            if (secondsLeft > 0)
-            {
-                GrowingBeetroot.SetActive(true);
-            }
-            else
-            {
-                MatureBeetroot.SetActive(true);
-            }
+            icon.sprite = plantData.growingSprite;
+        }
+        else if (slotState == SlotState.Mature)
+        {
+            icon.sprite = plantData.matureSprite;
         }
 
         UpdateTextUi();
@@ -51,84 +48,65 @@ public class Slot : MonoBehaviour
 
     private void UpdateTextUi()
     {
-        if (plantedType == "")
+        switch(slotState)
         {
-            textUi.text = "Plant";
-        }
-        else if (secondsLeft > 0)
-        {
-            textUi.text = $"{Math.Ceiling(secondsLeft)}s";
-        }
-        else
-        {
-            textUi.text = "Harvest";
+            case SlotState.Empty:
+                textUi.text = "Plant";
+                break;
+
+            case SlotState.Growing:
+                textUi.text = $"{Math.Ceiling(secondsLeft)}s";
+                break;
+
+            case SlotState.Mature:
+                textUi.text = "Harvest";
+                break;
         }
     }
 
-    public void PlantWheat()
+    public void Plant(int plantId)
     {
-        plantedType = "Wheat";
-        EmptySoil.SetActive(false);
-        GrowingWheat.SetActive(true);
-        secondsLeft = 10;
-        UpdateTextUi();
-    }
+        plantedId = plantId;
+        PlantData plantData = plantManager.plantsData[plantId];
 
-    public void PlantBeetroot()
-    {
-        plantedType = "Beetroot";
-        EmptySoil.SetActive(false);
-        GrowingBeetroot.SetActive(true);
-        secondsLeft = 20;
+        icon.sprite = plantData.growingSprite;
+        secondsLeft = plantData.growthTime;
+        slotState = SlotState.Growing;
         UpdateTextUi();
     }
 
     public void PassTime(float seconds)
     {
-        if (plantedType == "") return;
+        if (slotState == SlotState.Empty) return;
         if (secondsLeft <= 0) return;
 
         secondsLeft -= seconds;
-        UpdateTextUi();
+
         if (secondsLeft <= 0)
         {
-            if(plantedType == "Wheat")
-            {
-                GrowingWheat.SetActive(false);
-                MatureWheat.SetActive(true);
-            }
-            else if(plantedType == "Beetroot")
-            {
-                GrowingBeetroot.SetActive(false);
-                MatureBeetroot.SetActive(true);
-            }
+            PlantData plantData = plantManager.plantsData[plantedId];
+            icon.sprite = plantData.matureSprite;
+            slotState = SlotState.Mature;
         }
+
+        UpdateTextUi();
     }
 
-    public void OpenUi()
+    public void OnClicked()
     {
-        if(plantedType == "Wheat" && secondsLeft <= 0)
+        if(slotState == SlotState.Mature)
         {
-            plantedType = "";
-            MatureWheat.SetActive(false);
-            EmptySoil.SetActive(true);
-            EconomyManager.Instance.AddMoney(2);
+            PlantData plantData = plantManager.plantsData[plantedId];
+            EconomyManager.Instance.AddMoney(plantData.sellPrice);
+            plantedId = -1;
+            slotState = SlotState.Empty;
+            icon.sprite = EmptySoil;
             UpdateTextUi();
             return;
         }
 
-        if(plantedType == "Beetroot" && secondsLeft <= 0)
-        {
-            plantedType = "";
-            EconomyManager.Instance.AddMoney(20);
-            MatureBeetroot.SetActive(false);
-            EmptySoil.SetActive(true);
-            UpdateTextUi();
-            return;
-        }
-
-        if(plantedType != "") return;
-        PlantManager.Instance.OpenMenu(this);
+        if(slotState != SlotState.Empty) return;
+        plantManager.OpenMenu(this);
     }
 
     public SlotSaveData GetSlotSaveData()
@@ -136,7 +114,8 @@ public class Slot : MonoBehaviour
         SlotSaveData data = new()
         {
             position = new Vector2Int((int)(transform.position.x / 5), (int)(transform.position.y / 5)),
-            plantedType = plantedType,
+            slotState = slotState,
+            plantedId = plantedId,
             secondsLeft = secondsLeft
         };
         return data;

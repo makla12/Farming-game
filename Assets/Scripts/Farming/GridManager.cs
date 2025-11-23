@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private ConfirmBuyUi confirmBuyUi;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject buySlotPrefab;
+    [SerializeField] private PlantManager plantManager;
     private HashSet<Vector2Int> occupiedSlots = new();
     private HashSet<Vector2Int> slotsToBuy = new();
 
@@ -17,7 +18,8 @@ public class GridManager : MonoBehaviour
         {
             occupiedSlots.Add(slotData.position);
             Slot slot = Instantiate(slotPrefab, new Vector3(slotData.position.x * 5, slotData.position.y * 5, 1), Quaternion.identity, transform).GetComponent<Slot>();
-            slot.LoadData(slotData.plantedType, slotData.secondsLeft);
+            slot.plantManager = plantManager;
+            slot.LoadData(slotData.plantedId, slotData.secondsLeft, slotData.slotState);
         }
 
         foreach (var pos in occupiedSlots)
@@ -74,7 +76,8 @@ public class GridManager : MonoBehaviour
         {
             occupiedSlots.Add(position);
             slotsToBuy.Remove(position);
-            Instantiate(slotPrefab, new Vector3(position.x * 5, position.y * 5, 1), Quaternion.identity, transform);
+            Slot slot = Instantiate(slotPrefab, new Vector3(position.x * 5, position.y * 5, 1), Quaternion.identity, transform).GetComponent<Slot>();
+            slot.plantManager = plantManager;
             CreateBuySlotsArround(position);
         }
     }
