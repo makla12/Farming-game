@@ -5,19 +5,6 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    public static GridManager Instance;
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else 
-        {
-            Destroy(gameObject);
-        }
-    }
-
     [SerializeField] private ConfirmBuyUi confirmBuyUi;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject buySlotPrefab;
@@ -29,7 +16,7 @@ public class GridManager : MonoBehaviour
         foreach(var slotData in slotsSaveData)
         {
             occupiedSlots.Add(slotData.position);
-            Slot slot = Instantiate(slotPrefab, new Vector3(slotData.position.x * 5, 0, slotData.position.y * 5), Quaternion.identity, transform).GetComponent<Slot>();
+            Slot slot = Instantiate(slotPrefab, new Vector3(slotData.position.x * 5, slotData.position.y * 5, 1), Quaternion.identity, transform).GetComponent<Slot>();
             slot.LoadData(slotData.plantedType, slotData.secondsLeft);
         }
 
@@ -70,7 +57,7 @@ public class GridManager : MonoBehaviour
             Vector2Int adjacentPos = position + dir;
             if (!occupiedSlots.Contains(adjacentPos) && !slotsToBuy.Contains(adjacentPos))
             {
-                Instantiate(buySlotPrefab, new Vector3(adjacentPos.x * 5, 0, adjacentPos.y * 5), Quaternion.identity, transform).GetComponent<BuySlot>().slotGrid = this;
+                Instantiate(buySlotPrefab, new Vector3(adjacentPos.x * 5, adjacentPos.y * 5, 1), Quaternion.identity, transform).GetComponent<BuySlot>().slotGrid = this;
                 slotsToBuy.Add(adjacentPos);
             }
         }
@@ -87,7 +74,7 @@ public class GridManager : MonoBehaviour
         {
             occupiedSlots.Add(position);
             slotsToBuy.Remove(position);
-            Instantiate(slotPrefab, new Vector3(position.x * 5, 0, position.y * 5), Quaternion.identity, transform);
+            Instantiate(slotPrefab, new Vector3(position.x * 5, position.y * 5, 1), Quaternion.identity, transform);
             CreateBuySlotsArround(position);
         }
     }

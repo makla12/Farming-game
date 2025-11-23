@@ -16,7 +16,7 @@ public class SaveManager : MonoBehaviour
         PlayerSaveData data = new()
         {
             money = EconomyManager.Instance.money,
-            slotsData = GridManager.Instance.GetSlotsData(),
+            slotsData = gridManager.GetSlotsData(),
             lastExitTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
         };
         string json = JsonUtility.ToJson(data);

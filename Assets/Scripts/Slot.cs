@@ -135,7 +135,7 @@ public class Slot : MonoBehaviour
     {
         SlotSaveData data = new()
         {
-            position = new Vector2Int((int)(transform.position.x / 5), (int)(transform.position.z / 5)),
+            position = new Vector2Int((int)(transform.position.x / 5), (int)(transform.position.y / 5)),
             plantedType = plantedType,
             secondsLeft = secondsLeft
         };
