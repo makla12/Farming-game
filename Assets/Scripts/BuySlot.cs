@@ -6,7 +6,7 @@ public class BuySlot : MonoBehaviour
 
     public void BuyNewSlot()
     {
-        Vector2Int slotPosition = new((int)transform.position.x / 5, (int)transform.position.z / 5);
+        Vector2Int slotPosition = new((int)transform.position.x / 5, (int)transform.position.y / 5);
         slotGrid.TryToBuySlotAt(slotPosition, gameObject);
     }
 }
