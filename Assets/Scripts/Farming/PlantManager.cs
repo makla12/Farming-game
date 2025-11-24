@@ -60,17 +60,4 @@ public class PlantManager : MonoBehaviour
             slot.PassTime(seconds);
         }
     }
-
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            PlantWheat();
-        }
-
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            PlantBeetroot();
-        }
-    }
 }

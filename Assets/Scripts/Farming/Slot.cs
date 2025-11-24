@@ -127,9 +127,5 @@ public class Slot : MonoBehaviour
         {
             PassTime(Time.deltaTime);
         }
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            PassTime(1f);
-        }
     }
 }
