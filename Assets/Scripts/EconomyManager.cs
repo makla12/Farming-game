@@ -47,6 +47,6 @@ public class EconomyManager : MonoBehaviour
 
     public void UpdateMoneyUI()
     {
-        moneyText.text = "Saldo: " + money;
+        moneyText.text = money.ToString();
     }
 }

@@ -32,22 +32,13 @@ public class PlantManager : MonoBehaviour
         plantUi.SetActive(false);
     }
 
-    public void PlantWheat()
+    public void Plant(int plantId)
     {
         if (selectedSlot == null) return;
-        if (EconomyManager.Instance.SpendMoney(1))
+        PlantData plantData = plantsData[plantId];
+        if (EconomyManager.Instance.SpendMoney(plantData.plantPrice))
         {
-            selectedSlot.Plant(0);
-            CloseMenu();
-        } 
-    }
-
-    public void PlantBeetroot()
-    {
-        if(selectedSlot == null) return;
-        if (EconomyManager.Instance.SpendMoney(15))
-        {
-            selectedSlot.Plant(1);
+            selectedSlot.Plant(plantId);
             CloseMenu();
         } 
     }
