@@ -7,6 +7,8 @@ public enum SlotState
     Empty,
     Growing,
     Mature,
+    Planting,
+    Harvesting,
 }
 
 public class Slot : MonoBehaviour
@@ -54,12 +56,12 @@ public class Slot : MonoBehaviour
                 textUi.text = "Plant";
                 break;
 
-            case SlotState.Growing:
-                textUi.text = $"{Math.Ceiling(secondsLeft)}s";
-                break;
-
             case SlotState.Mature:
                 textUi.text = "Harvest";
+                break;
+            
+            default:
+                textUi.text = $"{Math.Ceiling(secondsLeft)}s";
                 break;
         }
     }
@@ -69,24 +71,48 @@ public class Slot : MonoBehaviour
         plantedId = plantId;
         PlantData plantData = plantManager.plantsData[plantId];
 
-        icon.sprite = plantData.growingSprite;
-        secondsLeft = plantData.growthTime;
-        slotState = SlotState.Growing;
+        // icon.sprite = plantData.growingSprite;
+        secondsLeft = plantData.plantTime;
+        slotState = SlotState.Planting;
         UpdateTextUi();
     }
 
-    public void PassTime(float seconds)
+    public void PassTime(double seconds)
     {
         if (slotState == SlotState.Empty) return;
+        if(seconds <= 0) return;
         if (secondsLeft <= 0) return;
 
+        double startingTime = secondsLeft;
         secondsLeft -= seconds;
 
         if (secondsLeft <= 0)
         {
-            PlantData plantData = plantManager.plantsData[plantedId];
-            icon.sprite = plantData.matureSprite;
-            slotState = SlotState.Mature;
+            if(slotState == SlotState.Planting)
+            {
+                PlantData plantData = plantManager.plantsData[plantedId];
+                icon.sprite = plantData.growingSprite;
+                secondsLeft = plantData.growthTime;
+                slotState = SlotState.Growing;
+            }
+
+            else if(slotState == SlotState.Growing)
+            {
+                PlantData plantData = plantManager.plantsData[plantedId];
+                icon.sprite = plantData.matureSprite;
+                slotState = SlotState.Mature;
+            }
+
+            else if(slotState == SlotState.Harvesting)
+            {
+                PlantData plantData = plantManager.plantsData[plantedId];
+                EconomyManager.Instance.AddMoney(plantData.sellPrice);
+                plantedId = -1;
+                icon.sprite = EmptySoil;
+                slotState = SlotState.Empty;
+            }
+
+            PassTime(seconds - startingTime);
         }
 
         UpdateTextUi();
@@ -97,10 +123,9 @@ public class Slot : MonoBehaviour
         if(slotState == SlotState.Mature)
         {
             PlantData plantData = plantManager.plantsData[plantedId];
-            EconomyManager.Instance.AddMoney(plantData.sellPrice);
-            plantedId = -1;
-            slotState = SlotState.Empty;
             icon.sprite = EmptySoil;
+            secondsLeft = plantData.harvestTime;
+            slotState = SlotState.Harvesting;
             UpdateTextUi();
             return;
         }

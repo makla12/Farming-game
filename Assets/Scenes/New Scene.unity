@@ -445,13 +445,17 @@ MonoBehaviour:
   plantUi: {fileID: 1286963511}
   plantsData:
   - plantType: Wheet
+    plantTime: 5
     growthTime: 10
+    harvestTime: 5
     plantPrice: 5
     sellPrice: 5
     growingSprite: {fileID: -7377819553374844296, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
     matureSprite: {fileID: 7411919347176863388, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
   - plantType: Beetroot
+    plantTime: 5
     growthTime: 20
+    harvestTime: 5
     plantPrice: 15
     sellPrice: 30
     growingSprite: {fileID: -7377819553374844296, guid: b95c592d67ad50d47aa87aa51905ea7b, type: 3}
@@ -1629,7 +1633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1286963512
 RectTransform:
   m_ObjectHideFlags: 0
